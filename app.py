@@ -15,13 +15,8 @@ import matplotlib.pyplot as plt
 def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     st.write(f"Đang tạo {num_samples} mẫu dữ liệu với {num_receivers} trạm thu...")
 
-    # Tọa độ nguồn phát xạ ngẫu nhiên (target)
-    source_coords = np.random.rand(num_samples, 2) * 100  # Nguồn trong phạm vi 100x100
-
-    # Tọa độ trạm thu ngẫu nhiên
+    source_coords = np.random.rand(num_samples, 2) * 100
     receiver_coords = np.random.rand(num_samples, num_receivers * 2) * 100
-
-    # RSSI và AoA (mô phỏng đơn giản)
     rssi_data = np.zeros((num_samples, num_receivers))
     aoa_data = np.zeros((num_samples, num_receivers))
 
@@ -29,17 +24,14 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
         for j in range(num_receivers):
             rx_x, rx_y = receiver_coords[i, j * 2], receiver_coords[i, j * 2 + 1]
             src_x, src_y = source_coords[i, 0], source_coords[i, 1]
-
             distance = np.sqrt((src_x - rx_x)**2 + (src_y - rx_y)**2)
             rssi_data[i, j] = 100 - 20 * np.log10(distance + 1e-6) + np.random.normal(0, noise_level * 10)
             angle = np.degrees(np.arctan2(src_y - rx_y, src_x - rx_x))
             aoa_data[i, j] = angle + np.random.normal(0, noise_level * 5)
 
-    # Gộp dữ liệu đầu vào
     X = np.hstack([receiver_coords, rssi_data, aoa_data])
     y = source_coords
 
-    # Tạo tên cột cho dataframe
     feature_names = []
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
@@ -55,7 +47,6 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     st.success("Tạo dữ liệu tổng hợp thành công!")
     return df_X, df_y
 
-# --- Hàm tính khoảng cách Haversine (cho tọa độ địa lý, giả định cho demo) ---
 def haversine_distance(lat1, lon1, lat2, lon2):
     R = 6371000
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
@@ -86,10 +77,10 @@ if st.sidebar.button("Tạo Dữ liệu"):
     st.session_state['X'] = X
     st.session_state['y'] = y
     st.session_state['data_generated'] = True
-    st.sidebar.success("Dữ liệu đã được tạo!")
-else:
-    if 'data_generated' not in st.session_state:
-        st.session_state['data_generated'] = False
+
+# Nếu chưa tạo thì đặt cờ là False
+if 'data_generated' not in st.session_state:
+    st.session_state['data_generated'] = False
 
 # --- Hiển thị dữ liệu ---
 if st.session_state['data_generated']:
@@ -136,8 +127,12 @@ if st.session_state['data_generated']:
         model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
 
     elif model_choice == "MLP Regressor (Neural Network)":
-        hidden_layer_sizes = st.sidebar.text_input("Kích thước lớp ẩn", "100,50")
-        hidden_layer_sizes = tuple(map(int, hidden_layer_sizes.split(',')))
+        hidden_layer_sizes_str = st.sidebar.text_input("Kích thước lớp ẩn (VD: 100,50)", "100,50")
+        try:
+            hidden_layer_sizes = tuple(map(int, hidden_layer_sizes_str.split(',')))
+        except:
+            st.sidebar.error("Lỗi: nhập sai định dạng lớp ẩn.")
+            hidden_layer_sizes = (100, 50)
         max_iter = st.sidebar.slider("Số vòng lặp", 100, 1000, 200, 50)
         learning_rate_init = st.sidebar.slider("Tốc độ học", 0.0001, 0.1, 0.001, 0.0001, format="%f")
         model = MLPRegressor(
@@ -158,21 +153,22 @@ if st.session_state['data_generated']:
     st.sidebar.subheader("4. Huấn luyện Mô hình")
     if st.sidebar.button("Bắt đầu Huấn luyện"):
         st.subheader("Kết quả Huấn luyện")
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
+        try:
+            model.fit(X_train, y_train)
+            y_pred = model.predict(X_test)
+            mse = mean_squared_error(y_test, y_pred)
+            mae = mean_absolute_error(y_test, y_pred)
 
-        mse = mean_squared_error(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
+            st.write(f"**Mean Squared Error (MSE):** {mse:.4f}")
+            st.write(f"**Mean Absolute Error (MAE):** {mae:.4f}")
 
-        st.write(f"**Mean Squared Error (MSE):** {mse:.4f}")
-        st.write(f"**Mean Absolute Error (MAE):** {mae:.4f}")
-
-        # Vẽ biểu đồ scatter giữa y_test và y_pred
-        fig, ax = plt.subplots()
-        ax.scatter(y_test['source_x'], y_test['source_y'], label="Thực tế", c='blue')
-        ax.scatter(y_pred[:, 0], y_pred[:, 1], label="Dự đoán", c='red', alpha=0.6)
-        ax.set_xlabel("X")
-        ax.set_ylabel("Y")
-        ax.set_title("Vị trí nguồn phát xạ: Thực tế vs Dự đoán")
-        ax.legend()
-        st.pyplot(fig)
+            fig, ax = plt.subplots()
+            ax.scatter(y_test['source_x'], y_test['source_y'], label="Thực tế", c='blue')
+            ax.scatter(y_pred[:, 0], y_pred[:, 1], label="Dự đoán", c='red', alpha=0.6)
+            ax.set_xlabel("X")
+            ax.set_ylabel("Y")
+            ax.set_title("Vị trí nguồn phát xạ: Thực tế vs Dự đoán")
+            ax.legend()
+            st.pyplot(fig)
+        except Exception as e:
+            st.error(f"Lỗi khi huấn luyện mô hình: {e}")
