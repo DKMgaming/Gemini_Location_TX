@@ -205,9 +205,9 @@ if st.session_state['data_generated']:
             mae = mean_absolute_error(y_test, y_pred)
             rmse = np.sqrt(mse)
 
-            st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4, 5]")
-            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4, 5]")
-            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [4, 5]")
+            st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4, 5, 6]")
+            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4, 5, 6]")
+            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [5, 6]")
 
             # Tính khoảng cách Haversine nếu có thể (giả định tọa độ là vĩ độ/kinh độ)
             # Để minh họa Haversine, chúng ta sẽ giả định source_x và source_y là vĩ độ và kinh độ
@@ -215,7 +215,7 @@ if st.session_state['data_generated']:
             # cho mục đích demo.
             
             # Giả định: source_x là vĩ độ, source_y là kinh độ
-            haversine_errors =
+            haversine_errors = # Khởi tạo danh sách rỗng
             for i in range(y_test.shape): # Sửa lỗi: dùng y_test.shape để lấy số hàng
                 # Giả định y_test.iloc[i, 0] là vĩ độ, y_test.iloc[i, 1] là kinh độ
                 # Giả định y_pred[i, 0] là vĩ độ, y_pred[i, 1] là kinh độ
@@ -223,7 +223,7 @@ if st.session_state['data_generated']:
                 haversine_errors.append(dist)
             
             mean_haversine_error = np.mean(haversine_errors)
-            st.write(f"**Sai số khoảng cách Haversine trung bình (mét):** {mean_haversine_error:.2f} [5]")
+            st.write(f"**Sai số khoảng cách Haversine trung bình (mét):** {mean_haversine_error:.2f} [6]")
             st.markdown("*(Lưu ý: Khoảng cách Haversine được tính dựa trên giả định tọa độ là vĩ độ/kinh độ.)*")
 
             st.subheader("So sánh Dự đoán và Thực tế (10 mẫu đầu tiên)")
@@ -269,5 +269,5 @@ else:
 st.markdown("---")
 st.markdown("""
 **Lưu ý về dữ liệu tổng hợp:**
-Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[6, 7] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[8, 9]
+Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[7, 8, 9, 10] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[7, 11, 12, 13]
 """)
