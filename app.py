@@ -49,7 +49,7 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     # receiver_coords (num_samples, num_receivers * 2)
     # rssi_data (num_samples, num_receivers)
     # aoa_data (num_samples, num_receivers)
-    feature_names = [] # Khởi tạo danh sách rỗng
+    feature_names = # Khởi tạo danh sách rỗng
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
         feature_names.append(f'rx_{j+1}_y')
@@ -206,7 +206,7 @@ if st.session_state['data_generated']:
             rmse = np.sqrt(mse)
 
             st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4, 5, 6]")
-            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4, 5, 6]")
+            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 5, 6]")
             st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [5, 6]")
 
             # Tính khoảng cách Haversine nếu có thể (giả định tọa độ là vĩ độ/kinh độ)
@@ -215,7 +215,7 @@ if st.session_state['data_generated']:
             # cho mục đích demo.
             
             # Giả định: source_x là vĩ độ, source_y là kinh độ
-            haversine_errors = [] # Khởi tạo danh sách rỗng
+            haversine_errors = # Khởi tạo danh sách rỗng
             for i in range(y_test.shape): # Sửa lỗi: dùng y_test.shape để lấy số hàng
                 # Giả định y_test.iloc[i, 0] là vĩ độ, y_test.iloc[i, 1] là kinh độ
                 # Giả định y_pred[i, 0] là vĩ độ, y_pred[i, 1] là kinh độ
@@ -269,5 +269,5 @@ else:
 st.markdown("---")
 st.markdown("""
 **Lưu ý về dữ liệu tổng hợp:**
-Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[7, 8, 9, 10] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[7, 11, 12, 13]
+Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[7, 8, 9, 10, 11] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[7, 12, 13, 14]
 """)
