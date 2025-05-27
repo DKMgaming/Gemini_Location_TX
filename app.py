@@ -166,8 +166,15 @@ if st.session_state.get('data_generated', False):
     st.sidebar.subheader("4. Huấn luyện Mô hình")
     if st.sidebar.button("Bắt đầu Huấn luyện"):
         with st.spinner("Đang huấn luyện mô hình..."):
-            model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
+            if model_choice == "Support Vector Regressor":
+                model['x_model'].fit(X_train, y_train['source_x'])
+                model['y_model'].fit(X_train, y_train['source_y'])
+                y_pred_x = model['x_model'].predict(X_test)
+                y_pred_y = model['y_model'].predict(X_test)
+                y_pred = np.vstack((y_pred_x, y_pred_y)).T
+            else:
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
 
         mse = mean_squared_error(y_test, y_pred)
         mae = mean_absolute_error(y_test, y_pred)
