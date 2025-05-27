@@ -49,9 +49,6 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     # receiver_coords (num_samples, num_receivers * 2)
     # rssi_data (num_samples, num_receivers)
     # aoa_data (num_samples, num_receivers)
-    X = np.hstack((receiver_coords, rssi_data, aoa_data))
-    y = source_coords
-
     feature_names = # Khởi tạo danh sách rỗng
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
@@ -208,9 +205,9 @@ if st.session_state['data_generated']:
             mae = mean_absolute_error(y_test, y_pred)
             rmse = np.sqrt(mse)
 
-            st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4]")
-            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4]")
-            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [3, 4]")
+            st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4, 5]")
+            st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4, 5]")
+            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [4, 5]")
 
             # Tính khoảng cách Haversine nếu có thể (giả định tọa độ là vĩ độ/kinh độ)
             # Để minh họa Haversine, chúng ta sẽ giả định source_x và source_y là vĩ độ và kinh độ
@@ -219,14 +216,14 @@ if st.session_state['data_generated']:
             
             # Giả định: source_x là vĩ độ, source_y là kinh độ
             haversine_errors =
-            for i in range(y_test.shape): # Sử dụng y_test.shape để lặp qua số hàng
+            for i in range(y_test.shape): # Sửa lỗi: dùng y_test.shape để lấy số hàng
                 # Giả định y_test.iloc[i, 0] là vĩ độ, y_test.iloc[i, 1] là kinh độ
                 # Giả định y_pred[i, 0] là vĩ độ, y_pred[i, 1] là kinh độ
                 dist = haversine_distance(y_test.iloc[i, 0], y_test.iloc[i, 1], y_pred[i, 0], y_pred[i, 1])
                 haversine_errors.append(dist)
             
             mean_haversine_error = np.mean(haversine_errors)
-            st.write(f"**Sai số khoảng cách Haversine trung bình (mét):** {mean_haversine_error:.2f} [4]")
+            st.write(f"**Sai số khoảng cách Haversine trung bình (mét):** {mean_haversine_error:.2f} [5]")
             st.markdown("*(Lưu ý: Khoảng cách Haversine được tính dựa trên giả định tọa độ là vĩ độ/kinh độ.)*")
 
             st.subheader("So sánh Dự đoán và Thực tế (10 mẫu đầu tiên)")
@@ -241,7 +238,7 @@ if st.session_state['data_generated']:
             st.subheader("Biểu đồ phân tán: Dự đoán so với Thực tế")
             fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
-            ax.scatter(y_test.iloc[:, 0], y_pred[:, 0], alpha=0.5)
+            ax.scatter(y_test.iloc[:, 0], y_pred[:, 0], alpha=0.5) # Sửa lỗi: ax.scatter
             ax.plot([min(y_test.iloc[:, 0]), max(y_test.iloc[:, 0])],
                        [min(y_test.iloc[:, 0]), max(y_test.iloc[:, 0])],
                        color='red', linestyle='--')
@@ -250,7 +247,7 @@ if st.session_state['data_generated']:
             ax.set_ylabel('Dự đoán X')
             ax.grid(True)
 
-            ax.[1]scatter(y_test.iloc[:, 1], y_pred[:, 1], alpha=0.5)
+            ax.[1]scatter(y_test.iloc[:, 1], y_pred[:, 1], alpha=0.5) # Sửa lỗi: ax.[1]scatter
             ax.[1]plot([min(y_test.iloc[:, 1]), max(y_test.iloc[:, 1])],
                        [min(y_test.iloc[:, 1]), max(y_test.iloc[:, 1])],
                        color='red', linestyle='--')
@@ -272,5 +269,5 @@ else:
 st.markdown("---")
 st.markdown("""
 **Lưu ý về dữ liệu tổng hợp:**
-Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[5, 6] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[7, 8]
+Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[6, 7] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[8, 9]
 """)
