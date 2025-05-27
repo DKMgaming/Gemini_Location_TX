@@ -196,51 +196,51 @@ if st.session_state['data_generated']:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-        # --- Bản đồ Folium ---
         st.markdown("### 🗺️ Bản đồ Vị trí Thực tế và Dự đoán (giả định tọa độ GPS)")
 
-        # Giả sử dữ liệu nằm trong vùng gần (20.0, 105.0) -> chuyển sang tọa độ lat/lon
-        lat_base, lon_base = 20.0, 105.0
-        scale = 0.01  # mỗi đơn vị X/Y tương ứng 0.01 độ
+# Giả sử dữ liệu nằm trong vùng gần (20.0, 105.0)
+lat_base, lon_base = 20.0, 105.0
+scale = 0.01  # mỗi đơn vị X/Y tương ứng 0.01 độ
 
-        m = folium.Map(location=[lat_base, lon_base], zoom_start=13)
+m = folium.Map(location=[lat_base, lon_base], zoom_start=13)
 
-        for i in range(len(output_df)):
-            lat_true = lat_base + output_df.loc[i, 'source_y_thucte'] * scale
-            lon_true = lon_base + output_df.loc[i, 'source_x_thucte'] * scale
+for i in range(len(output_df)):
+    lat_true = lat_base + output_df.loc[i, 'source_y_thucte'] * scale
+    lon_true = lon_base + output_df.loc[i, 'source_x_thucte'] * scale
 
-            lat_pred = lat_base + output_df.loc[i, 'source_y_du_doan'] * scale
-            lon_pred = lon_base + output_df.loc[i, 'source_x_du_doan'] * scale
+    lat_pred = lat_base + output_df.loc[i, 'source_y_du_doan'] * scale
+    lon_pred = lon_base + output_df.loc[i, 'source_x_du_doan'] * scale
 
-            # Marker thực tế
-            folium.CircleMarker(
-                location=[lat_true, lon_true],
-                radius=5,
-                color='blue',
-                fill=True,
-                fill_color='blue',
-                fill_opacity=0.6,
-                popup=f"Thực tế #{i+1}"
-            ).add_to(m)
+    # Marker thực tế
+    folium.CircleMarker(
+        location=[lat_true, lon_true],
+        radius=5,
+        color='blue',
+        fill=True,
+        fill_color='blue',
+        fill_opacity=0.6,
+        popup=f"Thực tế #{i+1}"
+    ).add_to(m)
 
-            # Marker dự đoán
-            folium.CircleMarker(
-                location=[lat_pred, lon_pred],
-                radius=5,
-                color='red',
-                fill=True,
-                fill_color='red',
-                fill_opacity=0.6,
-                popup=f"Dự đoán #{i+1}"
-            ).add_to(m)
+    # Marker dự đoán
+    folium.CircleMarker(
+        location=[lat_pred, lon_pred],
+        radius=5,
+        color='red',
+        fill=True,
+        fill_color='red',
+        fill_opacity=0.6,
+        popup=f"Dự đoán #{i+1}"
+    ).add_to(m)
 
-            # Line giữa thực tế và dự đoán
-            folium.PolyLine(
-                locations=[[lat_true, lon_true], [lat_pred, lon_pred]],
-                color='gray',
-                weight=1.5,
-                opacity=0.5
-            ).add_to(m)
+    # Line giữa thực tế và dự đoán
+    folium.PolyLine(
+        locations=[[lat_true, lon_true], [lat_pred, lon_pred]],
+        color='gray',
+        weight=1.5,
+        opacity=0.5
+    ).add_to(m)
 
-        st_folium(m, width=700, height=500)
+# Giữ bản đồ hiển thị ổn định
+st_data = st_folium(m, width=700, height=500, returned_objects=[], key="ban_do_dudoan")
 
