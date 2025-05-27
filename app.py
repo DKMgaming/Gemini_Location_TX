@@ -155,7 +155,12 @@ if st.session_state.get('data_generated', False):
         C = st.sidebar.slider("C", 0.1, 10.0, 1.0, 0.1)
         epsilon = st.sidebar.slider("Epsilon", 0.01, 1.0, 0.1, 0.01)
         kernel = st.sidebar.selectbox("Kernel", ["rbf", "linear", "poly"])
-        model = SVR(C=C, epsilon=epsilon, kernel=kernel)
+        
+        # SVR chỉ dự đoán một đầu ra, nên cần huấn luyện 2 mô hình riêng cho source_x và source_y
+        model = {
+            'x_model': SVR(C=C, epsilon=epsilon, kernel=kernel),
+            'y_model': SVR(C=C, epsilon=epsilon, kernel=kernel)
+        }
 
     # Huấn luyện mô hình
     st.sidebar.subheader("4. Huấn luyện Mô hình")
