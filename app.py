@@ -49,7 +49,7 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     # receiver_coords (num_samples, num_receivers * 2)
     # rssi_data (num_samples, num_receivers)
     # aoa_data (num_samples, num_receivers)
-    feature_names = # Khởi tạo danh sách rỗng
+    feature_names =[]  # Khởi tạo danh sách rỗng
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
         feature_names.append(f'rx_{j+1}_y')
@@ -215,7 +215,7 @@ if st.session_state['data_generated']:
             # cho mục đích demo.
             
             # Giả định: source_x là vĩ độ, source_y là kinh độ
-            haversine_errors = # Khởi tạo danh sách rỗng
+            haversine_errors = []  # Khởi tạo danh sách rỗng
             for i in range(y_test.shape): # Sửa lỗi: dùng y_test.shape để lấy số hàng
                 # Giả định y_test.iloc[i, 0] là vĩ độ, y_test.iloc[i, 1] là kinh độ
                 # Giả định y_pred[i, 0] là vĩ độ, y_pred[i, 1] là kinh độ
