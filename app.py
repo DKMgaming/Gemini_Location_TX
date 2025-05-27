@@ -11,6 +11,11 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from math import radians, sin, cos, sqrt, atan2
 import matplotlib.pyplot as plt
 
+import folium
+from streamlit_folium import st_folium
+from io import BytesIO
+
+
 # --- Hàm tạo dữ liệu tổng hợp ---
 def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     st.write(f"Đang tạo {num_samples} mẫu dữ liệu với {num_receivers} trạm thu...")
@@ -172,3 +177,70 @@ if st.session_state['data_generated']:
             st.pyplot(fig)
         except Exception as e:
             st.error(f"Lỗi khi huấn luyện mô hình: {e}")
+        # --- Xuất file Excel ---
+        st.markdown("### 📁 Xuất File Kết quả Dự đoán")
+        output_df = pd.DataFrame({
+            'source_x_thucte': y_test['source_x'].values,
+            'source_y_thucte': y_test['source_y'].values,
+            'source_x_du_doan': y_pred[:, 0],
+            'source_y_du_doan': y_pred[:, 1]
+        })
+
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            output_df.to_excel(writer, index=False, sheet_name='DuDoanToaDo')
+        st.download_button(
+            label="📥 Tải xuống kết quả dự đoán (Excel)",
+            data=excel_buffer.getvalue(),
+            file_name="du_doan_toa_do.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        # --- Bản đồ Folium ---
+        st.markdown("### 🗺️ Bản đồ Vị trí Thực tế và Dự đoán (giả định tọa độ GPS)")
+
+        # Giả sử dữ liệu nằm trong vùng gần (20.0, 105.0) -> chuyển sang tọa độ lat/lon
+        lat_base, lon_base = 20.0, 105.0
+        scale = 0.01  # mỗi đơn vị X/Y tương ứng 0.01 độ
+
+        m = folium.Map(location=[lat_base, lon_base], zoom_start=13)
+
+        for i in range(len(output_df)):
+            lat_true = lat_base + output_df.loc[i, 'source_y_thucte'] * scale
+            lon_true = lon_base + output_df.loc[i, 'source_x_thucte'] * scale
+
+            lat_pred = lat_base + output_df.loc[i, 'source_y_du_doan'] * scale
+            lon_pred = lon_base + output_df.loc[i, 'source_x_du_doan'] * scale
+
+            # Marker thực tế
+            folium.CircleMarker(
+                location=[lat_true, lon_true],
+                radius=5,
+                color='blue',
+                fill=True,
+                fill_color='blue',
+                fill_opacity=0.6,
+                popup=f"Thực tế #{i+1}"
+            ).add_to(m)
+
+            # Marker dự đoán
+            folium.CircleMarker(
+                location=[lat_pred, lon_pred],
+                radius=5,
+                color='red',
+                fill=True,
+                fill_color='red',
+                fill_opacity=0.6,
+                popup=f"Dự đoán #{i+1}"
+            ).add_to(m)
+
+            # Line giữa thực tế và dự đoán
+            folium.PolyLine(
+                locations=[[lat_true, lon_true], [lat_pred, lon_pred]],
+                color='gray',
+                weight=1.5,
+                opacity=0.5
+            ).add_to(m)
+
+        st_folium(m, width=700, height=500)
+
