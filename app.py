@@ -49,7 +49,7 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     # receiver_coords (num_samples, num_receivers * 2)
     # rssi_data (num_samples, num_receivers)
     # aoa_data (num_samples, num_receivers)
-    feature_names = # Khởi tạo danh sách rỗng
+    feature_names = [] # Khởi tạo danh sách rỗng
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
         feature_names.append(f'rx_{j+1}_y')
