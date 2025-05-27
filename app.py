@@ -9,6 +9,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from math import radians, sin, cos, sqrt, atan2
+import matplotlib.pyplot as plt # Import matplotlib
 
 # --- Hàm tạo dữ liệu tổng hợp ---
 def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
@@ -51,7 +52,7 @@ def generate_synthetic_data(num_samples, num_receivers, noise_level=0.1):
     X = np.hstack((receiver_coords, rssi_data, aoa_data))
     y = source_coords
 
-    feature_names =
+    feature_names = # Khởi tạo danh sách rỗng
     for j in range(num_receivers):
         feature_names.append(f'rx_{j+1}_x')
         feature_names.append(f'rx_{j+1}_y')
@@ -209,23 +210,18 @@ if st.session_state['data_generated']:
 
             st.write(f"**Sai số bình phương trung bình (MSE):** {mse:.4f} [3, 4]")
             st.write(f"**Sai số tuyệt đối trung bình (MAE):** {mae:.4f} [3, 4]")
-            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [4]")
+            st.write(f"**Sai số căn bậc hai trung bình (RMSE):** {rmse:.4f} [3, 4]")
 
             # Tính khoảng cách Haversine nếu có thể (giả định tọa độ là vĩ độ/kinh độ)
-            # Lưu ý: Dữ liệu tổng hợp hiện tại là Cartesian, nhưng có thể mở rộng
-            # để minh họa Haversine nếu tọa độ là địa lý.
-            # Để đơn giản, chúng ta sẽ giả định các tọa độ là Cartesian và chỉ tính Euclidean.
-            # Nếu bạn muốn tính Haversine, bạn cần đảm bảo dữ liệu đầu vào là vĩ độ/kinh độ.
-            
             # Để minh họa Haversine, chúng ta sẽ giả định source_x và source_y là vĩ độ và kinh độ
             # trong một phạm vi nhỏ để khoảng cách Haversine không quá khác biệt so với Euclidean
             # cho mục đích demo.
             
             # Giả định: source_x là vĩ độ, source_y là kinh độ
             haversine_errors =
-            for i in range(y_test.shape):
-                # Giả định y_test[:, 0] là vĩ độ, y_test[:, 1] là kinh độ
-                # Giả định y_pred[:, 0] là vĩ độ, y_pred[:, 1] là kinh độ
+            for i in range(y_test.shape): # Sử dụng y_test.shape để lặp qua số hàng
+                # Giả định y_test.iloc[i, 0] là vĩ độ, y_test.iloc[i, 1] là kinh độ
+                # Giả định y_pred[i, 0] là vĩ độ, y_pred[i, 1] là kinh độ
                 dist = haversine_distance(y_test.iloc[i, 0], y_test.iloc[i, 1], y_pred[i, 0], y_pred[i, 1])
                 haversine_errors.append(dist)
             
@@ -276,7 +272,5 @@ else:
 st.markdown("---")
 st.markdown("""
 **Lưu ý về dữ liệu tổng hợp:**
-Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[5, 6] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[5, 7]
+Dữ liệu được tạo trong ứng dụng này là mô phỏng đơn giản. Trong thực tế, việc thu thập dữ liệu RF chất lượng cao, có nhãn là một thách thức lớn và thường tốn kém, mất thời gian.[5, 6] Các kỹ thuật phức tạp hơn như dò tia (ray tracing) và mô hình kênh không dây nâng cao được sử dụng để tạo dữ liệu tổng hợp thực tế hơn.[7, 8]
 """)
-
-import matplotlib.pyplot as plt
